@@ -165,13 +165,13 @@ export default function TripPlanner() {
               </div>
             </div>
         
-            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-3 p-3 bg-white rounded-lg border">
-              <div className="flex items-center space-x-3 w-full sm:w-auto">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center space-y-3 lg:space-y-0 lg:space-x-3 p-3 bg-white rounded-lg border">
+              <div className="flex items-center space-x-3 w-full lg:w-auto">
                 <Users className="h-5 w-5 text-green-500 flex-shrink-0" />
                 <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 flex-grow">
                   <div className="flex items-center space-x-2">
                     <span className="text-sm whitespace-nowrap">Adults:</span>
-                    <div className="flex items-center space-x-2 sm:hidden">
+                    <div className="flex items-center space-x-2 sm:flex lg:hidden">
                       <Button
                         variant="outline"
                         size="icon"
@@ -188,7 +188,7 @@ export default function TripPlanner() {
                         <Plus className="h-4 w-4" />
                       </Button>
                     </div>
-                    <div className="hidden sm:block">
+                    <div className="hidden lg:block">
                       <NumberInput
                         value={formData.adults}
                         onChange={(value: number) => updateFormData("adults", value)}
@@ -198,7 +198,7 @@ export default function TripPlanner() {
                   </div>
                   <div className="flex items-center space-x-2">
                     <span className="text-sm whitespace-nowrap">Children:</span>
-                    <div className="flex items-center space-x-2 sm:hidden">
+                    <div className="flex items-center space-x-2 sm:flex lg:hidden">
                       <Button
                         variant="outline"
                         size="icon"
@@ -215,7 +215,7 @@ export default function TripPlanner() {
                         <Plus className="h-4 w-4" />
                       </Button>
                     </div>
-                    <div className="hidden sm:block">
+                    <div className="hidden lg:block">
                       <NumberInput
                         value={formData.childrens}
                         onChange={(value: number) => updateFormData("childrens", value)}
@@ -225,7 +225,7 @@ export default function TripPlanner() {
                   </div>
                 </div>
               </div>
-              <div className="flex items-center space-x-3 w-full sm:w-auto">
+              <div className="flex items-center space-x-3 w-full lg:w-auto mt-3 lg:mt-0">
                 <Building className="h-5 w-5 text-green-500 flex-shrink-0" />
                 <Select
                   value={formData.accommodationType}
