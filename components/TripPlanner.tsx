@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Calendar, MapPin, Users, Heart, Home, Building, Lightbulb } from "lucide-react";
+import { Calendar, MapPin, Users, Heart, Home, Building, Lightbulb, Plus, Minus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { DateRangePicker } from "@/components/ui/date-range-picker";
@@ -144,19 +144,57 @@ export default function TripPlanner() {
                 <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 flex-grow">
                   <div className="flex items-center space-x-2">
                     <span className="text-sm whitespace-nowrap">Adults:</span>
-                    <NumberInput
-                      value={formData.adults}
-                      onChange={(value: number) => updateFormData("adults", value)}
-                      min={1}
-                    />
+                    <div className="flex items-center space-x-2 sm:hidden">
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        onClick={() => updateFormData("adults", Math.max(1, formData.adults - 1))}
+                      >
+                        <Minus className="h-4 w-4" />
+                      </Button>
+                      <span>{formData.adults}</span>
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        onClick={() => updateFormData("adults", formData.adults + 1)}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="hidden sm:block">
+                      <NumberInput
+                        value={formData.adults}
+                        onChange={(value: number) => updateFormData("adults", value)}
+                        min={1}
+                      />
+                    </div>
                   </div>
                   <div className="flex items-center space-x-2">
                     <span className="text-sm whitespace-nowrap">Children:</span>
-                    <NumberInput
-                      value={formData.childrens}
-                      onChange={(value: number) => updateFormData("childrens", value)}
-                      min={0}
-                    />
+                    <div className="flex items-center space-x-2 sm:hidden">
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        onClick={() => updateFormData("childrens", Math.max(0, formData.childrens - 1))}
+                      >
+                        <Minus className="h-4 w-4" />
+                      </Button>
+                      <span>{formData.childrens}</span>
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        onClick={() => updateFormData("childrens", formData.childrens + 1)}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="hidden sm:block">
+                      <NumberInput
+                        value={formData.childrens}
+                        onChange={(value: number) => updateFormData("childrens", value)}
+                        min={0}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
