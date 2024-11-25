@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Calendar, MapPin, Users, Heart, Home, Building, Lightbulb, Plus, Minus } from "lucide-react";
+import { Calendar as CalendarIcon, MapPin, Users, Heart, Home, Building, Lightbulb, Plus, Minus, CalendarDays } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { DateRangePicker } from "@/components/ui/date-range-picker";
@@ -12,13 +12,14 @@ import { NumberInput } from "@/components/ui/number-input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { Calendar } from "@/components/ui/calendar";
 
 export default function TripPlanner() {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
     destination: "",
-    startDate: new Date("2024-12-28"),
-    endDate: new Date("2025-01-04"),
+    startDate: null as Date | null,
+    endDate: null as Date | null,
     adults: 1,
     childrens: 0,
     interests: [] as string[],
@@ -27,8 +28,21 @@ export default function TripPlanner() {
   });
   const [showInspirationModal, setShowInspirationModal] = useState(false);
   const [showInterestsModal, setShowInterestsModal] = useState(false);
+  const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setFormData(prev => ({
+      ...prev,
+      startDate: new Date("2024-12-28"),
+      endDate: new Date("2025-01-04"),
+    }));
+  }, []);
+
+  const today = new Date();
+  const maxDate = new Date();
+  maxDate.setFullYear(maxDate.getFullYear() + 2);
 
   const updateFormData = (field: string, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -125,16 +139,29 @@ export default function TripPlanner() {
             </div>
         
             <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3 p-3 bg-white rounded-lg border">
-              <Calendar className="h-5 w-5 text-green-500" />
+              <CalendarIcon className="h-5 w-5 text-green-500" />
               <div className="text-sm w-full">
-                <DateRangePicker
-                  value={[formData.startDate, formData.endDate]}
-                  onChange={(dates: Date[]) => {
-                    updateFormData("startDate", dates[0]);
-                    updateFormData("endDate", dates[1]);
-                  }}
-                  className="w-full"
-                />
+                <div className="hidden sm:block">
+                  <DateRangePicker
+                    value={[formData.startDate, formData.endDate].filter(Boolean) as Date[]}
+                    onChange={(dates: Date[]) => {
+                      updateFormData("startDate", dates[0]);
+                      updateFormData("endDate", dates[1]);
+                    }}
+                    className="w-full"
+                  />
+                </div>
+                <div className="sm:hidden">
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => setShowCalendarModal(true)}
+                  >
+                    {formData.startDate && formData.endDate
+                      ? `${formData.startDate.toLocaleDateString()} - ${formData.endDate.toLocaleDateString()}`
+                      : "Select Dates"}
+                  </Button>
+                </div>
               </div>
             </div>
         
@@ -359,6 +386,54 @@ export default function TripPlanner() {
           >
             Done
           </Button>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={showCalendarModal} onOpenChange={setShowCalendarModal}>
+        <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden">
+          <DialogHeader className="p-4 bg-green-50">
+            <DialogTitle className="text-xl sm:text-2xl text-green-800">Select Dates</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 p-4 max-h-[70vh] overflow-y-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card className="p-4">
+                <div className="flex items-center mb-4">
+                  <CalendarDays className="h-5 w-5 mr-2 text-blue-500" />
+                  <h3 className="font-medium">Start Date</h3>
+                </div>
+                <Calendar
+                  mode="single"
+                  selected={formData.startDate}
+                  onSelect={(date) => updateFormData("startDate", date)}
+                  disabled={(date) =>
+                    date < today || (formData.endDate && date > formData.endDate) || date > maxDate
+                  }
+                  className="rounded-md border"
+                />
+              </Card>
+
+              <Card className="p-4">
+                <div className="flex items-center mb-4">
+                  <CalendarDays className="h-5 w-5 mr-2 text-blue-500" />
+                  <h3 className="font-medium">End Date</h3>
+                </div>
+                <Calendar
+                  mode="single"
+                  selected={formData.endDate}
+                  onSelect={(date) => updateFormData("endDate", date)}
+                  disabled={(date) =>
+                    date < today || (formData.startDate && date < formData.startDate) || date > maxDate
+                  }
+                  className="rounded-md border"
+                />
+              </Card>
+            </div>
+            <Button
+              className="w-full bg-green-600 hover:bg-green-700 text-white"
+              onClick={() => setShowCalendarModal(false)}
+            >
+              Confirm Dates
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
