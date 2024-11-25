@@ -114,7 +114,7 @@ export default function TripPlanner() {
                   />
                   <Button 
                     variant="outline" 
-                    className="text-green-600 hover:text-green-700 whitespace-nowrap"
+                    className="text-green-600 hover:text-white hover:bg-green-600 whitespace-nowrap"
                     onClick={() => setShowInspirationModal(true)}
                   >
                     <span className="hidden sm:inline">Get Inspired</span>
@@ -146,16 +146,16 @@ export default function TripPlanner() {
                     <span className="text-sm whitespace-nowrap">Adults:</span>
                     <div className="flex items-center space-x-2 sm:hidden">
                       <Button
-                        size="icon"
                         variant="outline"
+                        size="icon"
                         onClick={() => updateFormData("adults", Math.max(1, formData.adults - 1))}
                       >
                         <Minus className="h-4 w-4" />
                       </Button>
                       <span>{formData.adults}</span>
                       <Button
-                        size="icon"
                         variant="outline"
+                        size="icon"
                         onClick={() => updateFormData("adults", formData.adults + 1)}
                       >
                         <Plus className="h-4 w-4" />
@@ -173,16 +173,16 @@ export default function TripPlanner() {
                     <span className="text-sm whitespace-nowrap">Children:</span>
                     <div className="flex items-center space-x-2 sm:hidden">
                       <Button
-                        size="icon"
                         variant="outline"
+                        size="icon"
                         onClick={() => updateFormData("childrens", Math.max(0, formData.childrens - 1))}
                       >
                         <Minus className="h-4 w-4" />
                       </Button>
                       <span>{formData.childrens}</span>
                       <Button
-                        size="icon"
                         variant="outline"
+                        size="icon"
                         onClick={() => updateFormData("childrens", formData.childrens + 1)}
                       >
                         <Plus className="h-4 w-4" />
@@ -225,7 +225,7 @@ export default function TripPlanner() {
                   <span className="text-sm font-medium">Select your interests</span>
                   <Button 
                     variant="outline"
-                    className="text-green-600 hover:text-green-700 w-full sm:w-auto"
+                    className="text-green-600 hover:text-white hover:bg-green-600 w-full sm:w-auto"
                     onClick={() => setShowInterestsModal(true)}
                   >
                     {formData.interests.length > 0 ? `${formData.interests.length} selected` : "Choose interests"}
@@ -255,7 +255,7 @@ export default function TripPlanner() {
                   />
                   <Button 
                     variant="outline"
-                    className="text-green-600 hover:text-green-700 whitespace-nowrap"
+                    className="text-green-600 hover:text-white hover:bg-green-600 whitespace-nowrap"
                     onClick={requestLocation}
                     disabled={locationLoading}
                   >
