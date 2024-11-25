@@ -402,7 +402,7 @@ export default function TripPlanner() {
                 </div>
                 <Calendar
                   mode="single"
-                  selected={formData.startDate}
+                  selected={formData.startDate ?? undefined}
                   onSelect={(date) => updateFormData("startDate", date)}
                   disabled={(date) =>
                     date < today || (formData.endDate && date > formData.endDate) || date > maxDate
@@ -418,7 +418,7 @@ export default function TripPlanner() {
                 </div>
                 <Calendar
                   mode="single"
-                  selected={formData.endDate}
+                  selected={formData.endDate ?? undefined}
                   onSelect={(date) => updateFormData("endDate", date)}
                   disabled={(date) =>
                     date < today || (formData.startDate && date < formData.startDate) || date > maxDate
