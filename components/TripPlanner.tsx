@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Calendar as CalendarIcon, MapPin, Users, Heart, Home, Building, Lightbulb, Plus, Minus, CalendarDays } from "lucide-react";
+import { Calendar as CalendarIcon, MapPin, Users, Heart, Home, Building, Lightbulb, Plus, Minus, CalendarDays, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { DateRangePicker } from "@/components/ui/date-range-picker";
@@ -29,6 +29,10 @@ export default function TripPlanner() {
   const [showInspirationModal, setShowInspirationModal] = useState(false);
   const [showInterestsModal, setShowInterestsModal] = useState(false);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
+  const [showDestinationModal, setShowDestinationModal] = useState(false);
+  const [showStartingLocationModal, setShowStartingLocationModal] = useState(false);
+  const [showAccommodationModal, setShowAccommodationModal] = useState(false);
+  const [showTravelersModal, setShowTravelersModal] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
 
@@ -80,6 +84,14 @@ export default function TripPlanner() {
     { value: "local", label: "Local Communities" }
   ];
 
+  const accommodationOptions = [
+    { value: "eco-hotel", label: "Eco-Hotel" },
+    { value: "hostel", label: "Sustainable Hostel" },
+    { value: "apartment", label: "Green Apartment" },
+    { value: "eco-lodge", label: "Eco-Lodge" },
+    { value: "homestay", label: "Local Homestay" }
+  ];
+
   const requestLocation = async () => {
     setLocationLoading(true);
     setLocationError(null);
@@ -129,16 +141,27 @@ export default function TripPlanner() {
               <div className="flex-grow flex flex-col xl:flex-row space-y-3 xl:space-y-0 xl:space-x-3 p-3 bg-white rounded-lg border">
                 <div className="flex items-center space-x-3 flex-grow">
                   <MapPin className="h-5 w-5 text-green-500 flex-shrink-0" />
-                  <Input
-                    value={formData.destination}
-                    onChange={(e) => updateFormData("destination", e.target.value)}
-                    placeholder="Where would you like to go?"
-                    className="flex-grow"
-                    onBlur={handleDestinationSubmit}
-                  />
+                  <div className="hidden sm:block w-full">
+                    <Input
+                      value={formData.destination}
+                      onChange={(e) => updateFormData("destination", e.target.value)}
+                      placeholder="Where would you like to go?"
+                      className="flex-grow"
+                      onBlur={handleDestinationSubmit}
+                    />
+                  </div>
+                  <div className="sm:hidden w-full">
+                    <Button
+                      variant="outline"
+                      className="w-full text-left justify-start"
+                      onClick={() => setShowDestinationModal(true)}
+                    >
+                      {formData.destination || "Where would you like to go?"}
+                    </Button>
+                  </div>
                   <Button 
                     variant="outline" 
-                    className="text-green-600 hover:text-white hover:bg-green-600 whitespace-nowrap flex-shrink-0"
+                    className="text-green-600 hover:text-white hover:bg-green-600 whitespace-nowrap flex-shrink-0 hidden sm:flex"
                     onClick={() => setShowInspirationModal(true)}
                   >
                     <Lightbulb className="h-5 w-5" />
@@ -178,26 +201,18 @@ export default function TripPlanner() {
               <div className="flex items-center space-x-3 w-full lg:w-auto">
                 <Users className="h-5 w-5 text-green-500 flex-shrink-0" />
                 <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 flex-grow">
-                  <div className="flex items-center space-x-2">
-                    <span className="text-sm whitespace-nowrap">Adults:</span>
-                    <div className="flex items-center space-x-2 sm:flex lg:hidden">
+                  <div className="flex items-center space-x-2 w-full">
+                    <div className="flex items-center space-x-2 sm:flex lg:hidden w-full">
                       <Button
                         variant="outline"
-                        size="icon"
-                        onClick={() => updateFormData("adults", Math.max(1, formData.adults - 1))}
+                        className="w-full"
+                        onClick={() => setShowTravelersModal(true)}
                       >
-                        <Minus className="h-4 w-4" />
-                      </Button>
-                      <span>{formData.adults}</span>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => updateFormData("adults", formData.adults + 1)}
-                      >
-                        <Plus className="h-4 w-4" />
+                        {formData.adults} Adults, {formData.childrens} Children
                       </Button>
                     </div>
-                    <div className="hidden lg:block">
+                    <div className="hidden lg:flex items-center space-x-2">
+                      <span className="text-sm whitespace-nowrap">Adults:</span>
                       <NumberInput
                         value={formData.adults}
                         onChange={(value: number) => updateFormData("adults", value)}
@@ -205,52 +220,42 @@ export default function TripPlanner() {
                       />
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="hidden lg:flex items-center space-x-2">
                     <span className="text-sm whitespace-nowrap">Children:</span>
-                    <div className="flex items-center space-x-2 sm:flex lg:hidden">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => updateFormData("childrens", Math.max(0, formData.childrens - 1))}
-                      >
-                        <Minus className="h-4 w-4" />
-                      </Button>
-                      <span>{formData.childrens}</span>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => updateFormData("childrens", formData.childrens + 1)}
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <div className="hidden lg:block">
-                      <NumberInput
-                        value={formData.childrens}
-                        onChange={(value: number) => updateFormData("childrens", value)}
-                        min={0}
-                      />
-                    </div>
+                    <NumberInput
+                      value={formData.childrens}
+                      onChange={(value: number) => updateFormData("childrens", value)}
+                      min={0}
+                    />
                   </div>
                 </div>
               </div>
               <div className="flex items-center space-x-3 w-full lg:w-auto mt-3 lg:mt-0">
                 <Building className="h-5 w-5 text-green-500 flex-shrink-0" />
-                <Select
-                  value={formData.accommodationType}
-                  onValueChange={(value: string) => updateFormData("accommodationType", value)}
-                >
-                  <SelectTrigger className="w-full border-0 focus:ring-0">
-                    <SelectValue placeholder="Accommodation" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="eco-hotel">Eco-Hotel</SelectItem>
-                    <SelectItem value="hostel">Sustainable Hostel</SelectItem>
-                    <SelectItem value="apartment">Green Apartment</SelectItem>
-                    <SelectItem value="eco-lodge">Eco-Lodge</SelectItem>
-                    <SelectItem value="homestay">Local Homestay</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="hidden sm:block w-full">
+                  <Select
+                    value={formData.accommodationType}
+                    onValueChange={(value: string) => updateFormData("accommodationType", value)}
+                  >
+                    <SelectTrigger className="w-full border-0 focus:ring-0">
+                      <SelectValue placeholder="Accommodation" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {accommodationOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="sm:hidden w-full">
+                  <Button
+                    variant="outline"
+                    className="w-full text-left justify-start"
+                    onClick={() => setShowAccommodationModal(true)}
+                  >
+                    {formData.accommodationType ? accommodationOptions.find(option => option.value === formData.accommodationType)?.label : "Select Accommodation"}
+                  </Button>
+                </div>
               </div>
             </div>
         
@@ -288,10 +293,15 @@ export default function TripPlanner() {
                     placeholder="Where are you starting from?"
                     className="flex-grow"
                     onChange={(e) => updateFormData("startingLocation", e.target.value)}
+                    onClick={() => {
+                      if (window.innerWidth < 640) {
+                        setShowStartingLocationModal(true);
+                      }
+                    }}
                   />
                   <Button 
                     variant="outline"
-                    className="text-green-600 hover:text-white hover:bg-green-600 whitespace-nowrap"
+                    className="text-green-600 hover:text-white hover:bg-green-600 whitespace-nowrap hidden sm:flex"
                     onClick={requestLocation}
                     disabled={locationLoading}
                   >
@@ -356,7 +366,7 @@ export default function TripPlanner() {
                     updateFormData("destination", spot.name);
                     setShowInspirationModal(false);
                     if (window.innerWidth < 640) {
-                      setShowCalendarModal(true);
+                      setShowDestinationModal(true);
                     }
                   }}
                 >
@@ -394,7 +404,12 @@ export default function TripPlanner() {
           </div>
           <Button
             className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base"
-            onClick={() => setShowInterestsModal(false)}
+            onClick={() => {
+              setShowInterestsModal(false);
+              if (window.innerWidth < 640) {
+                setShowStartingLocationModal(true);
+              }
+            }}
           >
             Done
           </Button>
@@ -441,9 +456,171 @@ export default function TripPlanner() {
             </div>
             <Button
               className="w-full bg-green-600 hover:bg-green-700 text-white"
-              onClick={() => setShowCalendarModal(false)}
+              onClick={() => {
+                setShowCalendarModal(false);
+                if (window.innerWidth < 640) {
+                  setShowTravelersModal(true);
+                }
+              }}
             >
               Confirm Dates
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={showDestinationModal} onOpenChange={setShowDestinationModal}>
+        <DialogContent className="sm:max-w-[500px] p-4 max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl sm:text-2xl text-green-800">Search Destination</DialogTitle>
+          </DialogHeader>
+          <div className="mt-4 space-y-4">
+            <div className="flex items-center space-x-2">
+              <Search className="h-5 w-5 text-green-500" />
+              <Input
+                value={formData.destination}
+                onChange={(e) => updateFormData("destination", e.target.value)}
+                placeholder="Where would you like to go?"
+                className="flex-grow"
+              />
+            </div>
+            <Button
+              variant="outline"
+              className="w-full text-green-600 hover:text-white hover:bg-green-600"
+              onClick={() => setShowInspirationModal(true)}
+            >
+              <Lightbulb className="h-5 w-5 mr-2" />
+              Get Inspired
+            </Button>
+            <Button
+              className="w-full bg-green-600 hover:bg-green-700 text-white"
+              onClick={() => {
+                setShowDestinationModal(false);
+                if (window.innerWidth < 640) {
+                  setShowCalendarModal(true);
+                }
+              }}
+            >
+              Confirm Destination
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={showStartingLocationModal} onOpenChange={setShowStartingLocationModal}>
+        <DialogContent className="sm:max-w-[500px] p-4 max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl sm:text-2xl text-green-800">Starting Location</DialogTitle>
+          </DialogHeader>
+          <div className="mt-4 space-y-4">
+            <div className="flex items-center space-x-2">
+              <Home className="h-5 w-5 text-green-500" />
+              <Input
+                value={formData.startingLocation}
+                onChange={(e) => updateFormData("startingLocation", e.target.value)}
+                placeholder="Where are you starting from?"
+                className="flex-grow"
+              />
+            </div>
+            <Button
+              variant="outline"
+              className="w-full text-green-600 hover:text-white hover:bg-green-600"
+              onClick={requestLocation}
+              disabled={locationLoading}
+            >
+              <MapPin className="h-5 w-5 mr-2" />
+              {locationLoading ? "Getting location..." : "Use my location"}
+            </Button>
+            {locationError && (
+              <div className="text-sm text-red-500 mt-2">
+                {locationError}
+              </div>
+            )}
+            <Button
+              className="w-full bg-green-600 hover:bg-green-700 text-white"
+              onClick={() => setShowStartingLocationModal(false)}
+            >
+              Confirm Starting Location
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={showAccommodationModal} onOpenChange={setShowAccommodationModal}>
+        <DialogContent className="sm:max-w-[500px] p-4 max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl sm:text-2xl text-green-800">Select Accommodation Type</DialogTitle>
+          </DialogHeader>
+          <div className="mt-4 space-y-4">
+            {accommodationOptions.map((option) => (
+              <Button
+                key={option.value}
+                variant={formData.accommodationType === option.value ? "default" : "outline"}
+                className="w-full justify-start"
+                onClick={() => {
+                  updateFormData("accommodationType", option.value);
+                  setShowAccommodationModal(false);
+                }}
+              >
+                {option.label}
+              </Button>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={showTravelersModal} onOpenChange={setShowTravelersModal}>
+        <DialogContent className="sm:max-w-[500px] p-4 max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl sm:text-2xl text-green-800">Select Travelers</DialogTitle>
+          </DialogHeader>
+          <div className="mt-4 space-y-6">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Adults</label>
+              <div className="flex items-center space-x-4">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => updateFormData("adults", Math.max(1, formData.adults - 1))}
+                >
+                  <Minus className="h-4 w-4" />
+                </Button>
+                <span>{formData.adults}</span>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => updateFormData("adults", formData.adults + 1)}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Children</label>
+              <div className="flex items-center space-x-4">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => updateFormData("childrens", Math.max(0, formData.childrens - 1))}
+                >
+                  <Minus className="h-4 w-4" />
+                </Button>
+                <span>{formData.childrens}</span>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => updateFormData("childrens", formData.childrens + 1)}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <Button
+              className="w-full bg-green-600 hover:bg-green-700 text-white"
+              onClick={() => {
+                setShowTravelersModal(false);
+                if (window.innerWidth < 640) {
+                  setShowAccommodationModal(true);
+                }
+              }}
+            >
+              Confirm Travelers
             </Button>
           </div>
         </DialogContent>
