@@ -46,6 +46,15 @@ export default function TripPlanner() {
 
   const updateFormData = (field: string, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    if (field === "accommodationType" && window.innerWidth < 640) {
+      setShowInterestsModal(true);
+    }
+  };
+
+  const handleDestinationSubmit = () => {
+    if (formData.destination && window.innerWidth < 640) {
+      setShowCalendarModal(true);
+    }
   };
 
   const nextStep = () => {
@@ -116,51 +125,51 @@ export default function TripPlanner() {
       case 0:
         return (
           <div className="space-y-4">
-            <div className="flex flex-col space-y-3 p-3 bg-white rounded-lg border">
-              <div className="flex items-center space-x-3">
-                <MapPin className="h-5 w-5 text-green-500" />
-                <div className="flex-grow flex items-center space-x-3">
+            <div className="flex flex-col xl:flex-row space-y-4 xl:space-y-0 xl:space-x-4">
+              <div className="flex-grow flex flex-col xl:flex-row space-y-3 xl:space-y-0 xl:space-x-3 p-3 bg-white rounded-lg border">
+                <div className="flex items-center space-x-3 flex-grow">
+                  <MapPin className="h-5 w-5 text-green-500 flex-shrink-0" />
                   <Input
                     value={formData.destination}
                     onChange={(e) => updateFormData("destination", e.target.value)}
                     placeholder="Where would you like to go?"
                     className="flex-grow"
+                    onBlur={handleDestinationSubmit}
                   />
                   <Button 
                     variant="outline" 
-                    className="text-green-600 hover:text-white hover:bg-green-600 whitespace-nowrap"
+                    className="text-green-600 hover:text-white hover:bg-green-600 whitespace-nowrap flex-shrink-0"
                     onClick={() => setShowInspirationModal(true)}
                   >
-                    <span className="hidden sm:inline">Get Inspired</span>
-                    <Lightbulb className="h-5 w-5 sm:hidden" />
+                    <Lightbulb className="h-5 w-5" />
                   </Button>
                 </div>
               </div>
-            </div>
-        
-            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3 p-3 bg-white rounded-lg border">
-              <CalendarIcon className="h-5 w-5 text-green-500" />
-              <div className="text-sm w-full">
-                <div className="hidden sm:block">
-                  <DateRangePicker
-                    value={[formData.startDate, formData.endDate].filter(Boolean) as Date[]}
-                    onChange={(dates: Date[]) => {
-                      updateFormData("startDate", dates[0]);
-                      updateFormData("endDate", dates[1]);
-                    }}
-                    className="w-full"
-                  />
-                </div>
-                <div className="sm:hidden">
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => setShowCalendarModal(true)}
-                  >
-                    {formData.startDate && formData.endDate
-                      ? `${formData.startDate.toLocaleDateString()} - ${formData.endDate.toLocaleDateString()}`
-                      : "Select Dates"}
-                  </Button>
+          
+              <div className="flex items-center space-x-3 p-3 bg-white rounded-lg border xl:w-auto xl:flex-shrink-0">
+                <CalendarIcon className="h-5 w-5 text-green-500 flex-shrink-0" />
+                <div className="text-sm w-full">
+                  <div className="hidden sm:block">
+                    <DateRangePicker
+                      value={[formData.startDate, formData.endDate].filter(Boolean) as Date[]}
+                      onChange={(dates: Date[]) => {
+                        updateFormData("startDate", dates[0]);
+                        updateFormData("endDate", dates[1]);
+                      }}
+                      className="w-full"
+                    />
+                  </div>
+                  <div className="sm:hidden">
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => setShowCalendarModal(true)}
+                    >
+                      {formData.startDate && formData.endDate
+                        ? `${formData.startDate.toLocaleDateString()} - ${formData.endDate.toLocaleDateString()}`
+                        : "Select Dates"}
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -346,6 +355,9 @@ export default function TripPlanner() {
                   onClick={() => {
                     updateFormData("destination", spot.name);
                     setShowInspirationModal(false);
+                    if (window.innerWidth < 640) {
+                      setShowCalendarModal(true);
+                    }
                   }}
                 >
                   Select This Destination
